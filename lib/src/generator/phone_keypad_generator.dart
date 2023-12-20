@@ -30,7 +30,7 @@ class PhoneKeypadGenerator extends KeypadIndexedGenerator {
   @override
   KeyValue? getAlt(int index) {
     switch (index) {
-      case 9:
+      case 10:
         return ActionKey.plus();
       default:
         return null;
@@ -48,6 +48,8 @@ class PhoneKeypadGenerator extends KeypadIndexedGenerator {
   @override
   String? hint(int index) {
     switch (index) {
+      case 0:
+        return null;
       case 1:
         return 'ABC';
       case 2:
@@ -64,7 +66,7 @@ class PhoneKeypadGenerator extends KeypadIndexedGenerator {
         return 'TUV';
       case 8:
         return 'WXYZ';
-      case 9:
+      case 10:
         return '+';
       default:
         return null;
