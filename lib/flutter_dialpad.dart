@@ -8,7 +8,8 @@ import 'src/flutter_dialpad.dart';
 
 export 'src/flutter_dialpad.dart';
 
-typedef DialPadButtonBuilder = Widget Function(BuildContext context, int index, KeyValue key, KeyValue? altKey, String? hint);
+typedef DialPadButtonBuilder = Widget Function(BuildContext context, int index,
+    KeyValue key, KeyValue? altKey, String? hint);
 
 class DialPad extends StatefulWidget {
   /// Callback when the dial button is pressed.
@@ -167,7 +168,8 @@ class DialPad extends StatefulWidget {
     this.subtitleTextSize = 25,
     this.backspaceButtonIconColor = Colors.grey,
     this.enableDtmf = false,
-    @Deprecated('This has not yet been fully integrated for customer use and thus has no effect on the output - will be available in a future release.')
+    @Deprecated(
+        'This has not yet been fully integrated for customer use and thus has no effect on the output - will be available in a future release.')
     this.keypadButtonBuilder,
     this.generator = const PhoneKeypadGenerator(),
     this.buttonType = ButtonType.rectangle,
@@ -177,7 +179,8 @@ class DialPad extends StatefulWidget {
     this.callOnEnter = false,
     this.copyToClipboard = true,
     this.pasteFromClipboard = true,
-    this.textFieldPadding = const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 16),
+    this.textFieldPadding =
+        const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 16),
     this.scalingType = ScalingType.min,
     this.scalingSize = ScalingSize.medium,
     this.dialingButtonScalingSize,
@@ -260,7 +263,8 @@ class _DialPadState extends State<DialPad> {
   @override
   void initState() {
     super.initState();
-    _controller = MaskedTextController(text: widget.initialText ?? widget.withNumber, mask: widget.outputMask);
+    _controller = MaskedTextController(
+        text: widget.initialText ?? widget.withNumber, mask: widget.outputMask);
     _value = _controller.text;
   }
 
@@ -314,15 +318,21 @@ class _DialPadState extends State<DialPad> {
       _onKeyPressed(key.value);
       // Play the dtmf tone if enabled
       if (widget.enableDtmf) {
-        Dtmf.playTone(digits: key.value.trim(), samplingRate: 8000, durationMs: 160);
+        Dtmf.playTone(
+            digits: key.value.trim(), samplingRate: 8000, durationMs: 160);
       }
+    }
+
+    if (widget.keyPressed != null) {
+      widget.keyPressed!(_value);
     }
 
     // notifies UI of input changed
     _onTextChanged();
   }
 
-  Widget _defaultKeypadButtonBuilder(BuildContext context, int index, KeyValue key, KeyValue? altKey, String? hint) {
+  Widget _defaultKeypadButtonBuilder(BuildContext context, int index,
+      KeyValue key, KeyValue? altKey, String? hint) {
     return ActionButton(
       title: key.value,
       subtitle: altKey?.value ?? hint,
@@ -349,8 +359,14 @@ class _DialPadState extends State<DialPad> {
   void didUpdateWidget(DialPad oldWidget) {
     super.didUpdateWidget(oldWidget);
 
+    if (widget.outputMask != oldWidget.outputMask) {
+      _controller.updateMask(widget.outputMask ?? "");
+      _controller.updateText(_value);
+    }
+
     // if the withNumber property has changed, update the text field
-    if (widget.withNumber != null && widget.withNumber != oldWidget.withNumber) {
+    if (widget.withNumber != null &&
+        widget.withNumber != oldWidget.withNumber) {
       // update text field
       _controller.updateText(widget.withNumber ?? "");
       // update value with masked number
@@ -360,7 +376,8 @@ class _DialPadState extends State<DialPad> {
 
   @override
   Widget build(BuildContext context) {
-    final _keypadButtonBuilder = /*widget.keypadButtonBuilder ??  */ _defaultKeypadButtonBuilder;
+    final _keypadButtonBuilder = /*widget.keypadButtonBuilder ??  */
+        _defaultKeypadButtonBuilder;
     final _generator = widget.generator ?? IosKeypadGenerator();
 
     /// Dial button
@@ -384,7 +401,8 @@ class _DialPadState extends State<DialPad> {
           );
 
     /// Backspace button
-    final backspaceButton = widget.hideBackspaceButton || (_value.isEmpty && widget.hideBackspaceOnEmpty)
+    final backspaceButton = widget.hideBackspaceButton ||
+            (_value.isEmpty && widget.hideBackspaceOnEmpty)
         ? null
         : ActionButton(
             onTap: () => _onKeypadPressed(ActionKey.backspace()),
@@ -396,7 +414,8 @@ class _DialPadState extends State<DialPad> {
             icon: Icons.backspace,
             color: widget.backspaceButtonColor ?? Colors.transparent,
             scalingType: widget.scalingType,
-            scalingSize: widget.backspaceButtonScalingSize ?? widget.scalingSize,
+            scalingSize:
+                widget.backspaceButtonScalingSize ?? widget.scalingSize,
             minScalingSize: widget.minScalingSize,
             maxScalingSize: widget.maxScalingSize,
             contentPadding: widget.backspaceContentPadding,
@@ -419,7 +438,8 @@ class _DialPadState extends State<DialPad> {
         child: PhoneTextField(
           textColor: widget.dialOutputTextColor,
           textSize: widget.dialOutputTextSize,
-          decoration: InputDecoration(border: InputBorder.none, hintText: widget.hint),
+          decoration:
+              InputDecoration(border: InputBorder.none, hintText: widget.hint),
           controller: _controller,
           copyToClipboard: widget.copyToClipboard,
           readOnly: !widget.pasteFromClipboard,
