@@ -146,6 +146,9 @@ class DialPad extends StatefulWidget {
   /// Hide backspace button when text field is empty. Defaults to [false].
   final bool hideBackspaceOnEmpty;
 
+  /// Whether to clear entire entry when backspace is long-pressed. Defaults to [false].
+  final bool backspaceClearAllOnLongPress;
+
   DialPad({
     this.makeCall,
     this.initialText,
@@ -194,6 +197,7 @@ class DialPad extends StatefulWidget {
     this.backspaceContentPadding,
     this.keyButtonContentPadding,
     this.hideBackspaceOnEmpty = false,
+    this.backspaceClearAllOnLongPress = false,
   });
 
   /// Returns a [DialPad] with an iOS-style design (i.e. Apple).
@@ -295,6 +299,15 @@ class _DialPadState extends State<DialPad> {
       _value = _value.substring(0, _value.length - 1);
       _controller.text = _value;
     });
+  }
+
+  void _onBackspaceLongPressed() {
+    if (widget.backspaceClearAllOnLongPress) {
+      setState(() {
+        _value = "";
+        _controller.text = _value;
+      });
+    }
   }
 
   /// Handles dial button press
@@ -406,6 +419,7 @@ class _DialPadState extends State<DialPad> {
         ? null
         : ActionButton(
             onTap: () => _onKeypadPressed(ActionKey.backspace()),
+            onLongPressed: _onBackspaceLongPressed,
             // disabled: _value.isEmpty,
             buttonType: widget.buttonType,
             iconSize: widget.backspaceButtonIconSize ?? 50,
